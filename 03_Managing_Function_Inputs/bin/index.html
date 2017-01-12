@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Managing_Function_Inputs</title>
+	<meta name="description" content="" />
+	
+	<script type="text/javascript">
+		var FnLight = new function() {
+			this.partial = function(fn,...presetArgs) {
+				return function partiallyApplied(...laterArgs){
+					return fn( ...presetArgs, ...laterArgs );
+				};
+			}
+		}
+	</script>
+</head>
+<body>
+	
+	<script src="inputs.js"></script>
+</body>
+</html>
