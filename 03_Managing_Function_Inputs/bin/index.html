@@ -23,6 +23,21 @@
 				})( [] );
 			}
 
+			this.looseCurry = function(fn,arity = fn.length) {
+				return (function nextCurried(prevArgs){
+					return function curried(...nextArgs){
+						var args = prevArgs.concat( nextArgs );
+
+						if (args.length >= arity) {
+							return fn( ...args );
+						}
+						else {
+							return nextCurried( args );
+						}
+					};
+				})( [] );
+			}
+			
 			this.partial = function(fn,...presetArgs) {
 				return function partiallyApplied(...laterArgs){
 					return fn( ...presetArgs, ...laterArgs );
@@ -39,6 +54,32 @@
 				return this.reverseArgs(
 					this.partial( this.reverseArgs(fn), ...presetArgs.reverse() )
 				);
+			}
+			
+			this.sum = function(...args) {
+				var sum = 0;
+				for (let i = 0; i < args.length; i++) {
+					sum += args[i];
+				}
+				return sum;
+			}
+			
+			this.unary = function(fn) {
+				return function onlyOneArg(arg) {
+					return fn( arg );
+				}
+			}
+			
+			this.uncurry = function(fn) {
+				return function uncurried(...args){
+					var ret = fn;
+
+					for (let i = 0; i < args.length; i++) {
+						ret = ret( args[i] );
+					}
+
+					return ret;
+				};
 			}
 			
 		}

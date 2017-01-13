@@ -107,5 +107,30 @@ class Main {
 		var adder = FnLight.curry( add );
 		
 		trace( "[1, 2, 3, 4, 5].map( adder( 3 )): " + [1, 2, 3, 4, 5].map( adder( 3 )));
+		
+		trace( "sum( 1, 2, 3, 4, 5 ): " + FnLight.sum( 1, 2, 3, 4, 5 ));
+		
+		// now with currying:
+		// (5 to indicate how many we should wait for)
+		var curriedSum = FnLight.curry( FnLight.sum, 5 );
+		
+		trace( "curriedSum( 1 )( 2 )( 3 )( 4 )( 5 ): " + curriedSum( 1 )( 2 )( 3 )( 4 )( 5 ) );
+		
+		var curriedSumLoos = FnLight.looseCurry( FnLight.sum, 5 );
+		trace( "curriedSumLoos( 1 )( 2 , 3 )( 4, 5 ): " + curriedSumLoos( 1 )( 2 , 3 )( 4, 5 ) );
+
+		
+		var uncurriedSum = FnLight.uncurry( curriedSum );
+		trace( "uncurriedSum( 1, 2, 3, 4, 5 ): " + uncurriedSum( 1, 2, 3, 4, 5 ));
+		//trace( "uncurriedSum( 1, 2, 3 )( 4 )( 5 ): " + uncurriedSum( 1, 2, 3 )( 4 )( 5 )); // Haxe compiler catches error
+		
+		
+		var adder = FnLight.looseCurry( FnLight.sum, 2 );
+		
+		// oops...
+		trace( "[1,2,3,4,5].map( adder( 3 ): " + [1, 2, 3, 4, 5].map( adder( 3 )));
+		
+		// fixed with `unary(..)`:
+		trace( "[1,2,3,4,5].map( FnLight.unary( adder( 3 ))): " + [1,2,3,4,5].map( FnLight.unary( adder( 3 ))) );
 	}
 }

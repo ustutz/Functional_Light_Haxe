@@ -53,6 +53,14 @@ Main.curryExample = function() {
 	getCurrentUser(function(user) {
 	});
 	haxe_Log.trace("[1, 2, 3, 4, 5].map( adder( 3 )): " + Std.string([1,2,3,4,5].map(FnLight.curry(Main.add)(3))),{ fileName : "Main.hx", lineNumber : 109, className : "Main", methodName : "curryExample"});
+	haxe_Log.trace("sum( 1, 2, 3, 4, 5 ): " + Std.string(FnLight.sum(1,2,3,4,5)),{ fileName : "Main.hx", lineNumber : 111, className : "Main", methodName : "curryExample"});
+	var curriedSum = FnLight.curry(FnLight.sum,5);
+	haxe_Log.trace("curriedSum( 1 )( 2 )( 3 )( 4 )( 5 ): " + ((((curriedSum(1))(2))(3))(4))(5),{ fileName : "Main.hx", lineNumber : 117, className : "Main", methodName : "curryExample"});
+	haxe_Log.trace("curriedSumLoos( 1 )( 2 , 3 )( 4, 5 ): " + ((FnLight.looseCurry(FnLight.sum,5)(1))(2,3))(4,5),{ fileName : "Main.hx", lineNumber : 120, className : "Main", methodName : "curryExample"});
+	haxe_Log.trace("uncurriedSum( 1, 2, 3, 4, 5 ): " + FnLight.uncurry(curriedSum)(1,2,3,4,5),{ fileName : "Main.hx", lineNumber : 124, className : "Main", methodName : "curryExample"});
+	var adder = FnLight.looseCurry(FnLight.sum,2);
+	haxe_Log.trace("[1,2,3,4,5].map( adder( 3 ): " + Std.string([1,2,3,4,5].map(adder(3))),{ fileName : "Main.hx", lineNumber : 131, className : "Main", methodName : "curryExample"});
+	haxe_Log.trace("[1,2,3,4,5].map( FnLight.unary( adder( 3 ))): " + Std.string([1,2,3,4,5].map(FnLight.unary(adder(3)))),{ fileName : "Main.hx", lineNumber : 134, className : "Main", methodName : "curryExample"});
 };
 Math.__name__ = true;
 var Std = function() { };
