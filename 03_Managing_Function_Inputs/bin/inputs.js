@@ -3,20 +3,63 @@
 var Main = function() { };
 Main.__name__ = true;
 Main.ajax = function(url,data,callback) {
-	haxe_Log.trace("ajax( url:" + url + " data:" + JSON.stringify(data) + " callback:" + callback,{ fileName : "Main.hx", lineNumber : 15, className : "Main", methodName : "ajax"});
+	haxe_Log.trace("ajax( url:" + url + " data:" + JSON.stringify(data) + " callback:",{ fileName : "Main.hx", lineNumber : 18, className : "Main", methodName : "ajax"});
+	haxe_Log.trace(callback,{ fileName : "Main.hx", lineNumber : 19, className : "Main", methodName : "ajax"});
 };
 Main.main = function() {
 	com_ls3d_HTMLTrace.init();
 	Main.ajaxExample();
+	Main.addExample();
+	Main.reverseArgsExample();
+	Main.curryExample();
 };
 Main.ajaxExample = function() {
 	var getPerson = FnLight.partial(Main.ajax,"http://some.api/person");
 	FnLight.partial(Main.ajax,"http://some.api/order");
-	var getCurrentUser = FnLight.partial(getPerson,{ user : "123456"});
-	haxe_Log.trace("getCurrentUser():",{ fileName : "Main.hx", lineNumber : 35, className : "Main", methodName : "ajaxExample"});
+	Main.CURRENT_USER_ID = "123456";
+	var getCurrentUser = FnLight.partial(getPerson,{ user : Main.CURRENT_USER_ID});
+	haxe_Log.trace("getCurrentUser():",{ fileName : "Main.hx", lineNumber : 42, className : "Main", methodName : "ajaxExample"});
 	getCurrentUser();
 };
+Main.add = function(x,y) {
+	return x + y;
+};
+Main.addExample = function() {
+	haxe_Log.trace("add1: " + Std.string([1,2,3,4,5].map(function(val) {
+		return Main.add(3,val);
+	})),{ fileName : "Main.hx", lineNumber : 56, className : "Main", methodName : "addExample"});
+	haxe_Log.trace("add2: " + Std.string([1,2,3,4,5].map(FnLight.partial(Main.add,3))),{ fileName : "Main.hx", lineNumber : 59, className : "Main", methodName : "addExample"});
+};
+Main.reverseArgsExample = function() {
+	var cacheResult = FnLight.reverseArgs(FnLight.partial(FnLight.reverseArgs(Main.ajax),function(obj) {
+	}));
+	haxe_Log.trace("cacheResult:",{ fileName : "Main.hx", lineNumber : 71, className : "Main", methodName : "reverseArgsExample"});
+	cacheResult("http://some.api/person",{ user : Main.CURRENT_USER_ID});
+	var a3 = function(obj1) {
+	};
+	var cacheResultHaxe = function(a1,a2) {
+		Main.ajax(a1,a2,a3);
+	};
+	haxe_Log.trace("cacheResultHaxe:",{ fileName : "Main.hx", lineNumber : 81, className : "Main", methodName : "reverseArgsExample"});
+	cacheResultHaxe("http://some.api/person",{ user : Main.CURRENT_USER_ID});
+	var cacheResultPR = FnLight.partialRight(Main.ajax,function(obj2) {
+	});
+	haxe_Log.trace("cacheResultPR:",{ fileName : "Main.hx", lineNumber : 89, className : "Main", methodName : "reverseArgsExample"});
+	cacheResultPR("http://some.api/person",{ user : Main.CURRENT_USER_ID});
+};
+Main.curryExample = function() {
+	var getCurrentUser = (FnLight.curry(Main.ajax)("http://some.api/person"))({ user : Main.CURRENT_USER_ID});
+	haxe_Log.trace("getCurrentUser:",{ fileName : "Main.hx", lineNumber : 102, className : "Main", methodName : "curryExample"});
+	getCurrentUser(function(user) {
+	});
+	haxe_Log.trace("[1, 2, 3, 4, 5].map( adder( 3 )): " + Std.string([1,2,3,4,5].map(FnLight.curry(Main.add)(3))),{ fileName : "Main.hx", lineNumber : 109, className : "Main", methodName : "curryExample"});
+};
 Math.__name__ = true;
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
 var com_ls3d_HTMLTrace = function() { };
 com_ls3d_HTMLTrace.__name__ = true;
 com_ls3d_HTMLTrace.init = function() {

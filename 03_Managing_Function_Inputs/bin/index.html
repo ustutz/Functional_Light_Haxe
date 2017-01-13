@@ -7,11 +7,40 @@
 	
 	<script type="text/javascript">
 		var FnLight = new function() {
+			
+			this.curry = function(fn,arity = fn.length) {
+				return (function nextCurried(prevArgs){
+					return function curried(nextArg){
+						var args = prevArgs.concat( [nextArg] );
+
+						if (args.length >= arity) {
+							return fn( ...args );
+						}
+						else {
+							return nextCurried( args );
+						}
+					};
+				})( [] );
+			}
+
 			this.partial = function(fn,...presetArgs) {
 				return function partiallyApplied(...laterArgs){
 					return fn( ...presetArgs, ...laterArgs );
 				};
 			}
+			
+			this.reverseArgs = function(fn) {
+				return function argsReversed(...args){
+					return fn( ...args.reverse() );
+				};
+			}
+			
+			this.partialRight = function(fn, ...presetArgs) {
+				return this.reverseArgs(
+					this.partial( this.reverseArgs(fn), ...presetArgs.reverse() )
+				);
+			}
+			
 		}
 	</script>
 </head>
