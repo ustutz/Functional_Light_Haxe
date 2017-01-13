@@ -27,6 +27,7 @@ class Main {
 		addExample();
 		reverseArgsExample();
 		curryExample();
+		identityExample();
 	}
 	
 	static function ajaxExample():Void {
@@ -131,6 +132,37 @@ class Main {
 		trace( "[1,2,3,4,5].map( adder( 3 ): " + [1, 2, 3, 4, 5].map( adder( 3 )));
 		
 		// fixed with `unary(..)`:
-		trace( "[1,2,3,4,5].map( FnLight.unary( adder( 3 ))): " + [1,2,3,4,5].map( FnLight.unary( adder( 3 ))) );
+		trace( "[1,2,3,4,5].map( FnLight.unary( adder( 3 ))): " + [1, 2, 3, 4, 5].map( FnLight.unary( adder( 3 ))) );
+		
+	}
+	
+	static function identity( v:Dynamic ):Dynamic {
+		return v;
+	}
+	
+	static function identityExample():Void {
+		
+		var words = "   Now is the time for all...  ".split( " " );
+		trace( "words: " + words );
+		
+		trace( "words.filter( identity ): " + words.filter( identity ));
+		
+		var output = function( msg:String, ?formatFn:Dynamic ) {
+			if ( formatFn == null ) formatFn = identity;
+			
+			msg = formatFn( msg );
+			trace( msg );
+		}
+		
+		function upper( txt:String ):String {
+			return txt.toUpperCase();
+		}
+		
+		trace( "output( 'Hello World', upper ):" );
+		output( 'Hello World', upper );
+		
+		trace( "output( 'Hello World' ):" );
+		output( 'Hello World' );
+		
 	}
 }
