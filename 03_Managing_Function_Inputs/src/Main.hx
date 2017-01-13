@@ -28,6 +28,8 @@ class Main {
 		reverseArgsExample();
 		curryExample();
 		identityExample();
+		noPointsExample();
+		printIfPointless();
 	}
 	
 	static function ajaxExample():Void {
@@ -147,7 +149,7 @@ class Main {
 		
 		trace( "words.filter( identity ): " + words.filter( identity ));
 		
-		var output = function( msg:String, ?formatFn:Dynamic ) {
+		function output( msg:String, ?formatFn:Dynamic ) {
 			if ( formatFn == null ) formatFn = identity;
 			
 			msg = formatFn( msg );
@@ -163,6 +165,94 @@ class Main {
 		
 		trace( "output( 'Hello World' ):" );
 		output( 'Hello World' );
+		
+	}
+	
+	static function noPointsExample():Void {
+		
+		function double( x ) {
+			return x * 2;
+		}
+		
+		trace( "double map1 [1, 2, 3, 4, 5]: " + [1, 2, 3, 4, 5].map( function mapper( v ) {
+			return double( v );
+		}));
+		
+		trace( "double map2 [1, 2, 3, 4, 5]: " + [1, 2, 3, 4, 5].map( double ));
+		
+		// is not useful because Haxe parseInt doesn't have an radix argument
+		trace( "parseInt map ['1', '2', '3']: " + ['1', '2', '3'].map( function mapper( v ) {
+			return Std.parseInt( v );
+		}));
+		
+		
+		
+		function output( txt:String ):Void {
+			trace( txt );
+		}
+		
+		function printIf( msg:String, predicate:String->Bool ):Void {
+			if ( predicate( msg )) {
+				output( msg );
+			}
+		}
+		
+		function isShortEnough( str:String ):Bool {
+			return str.length <= 5;
+		}
+		
+		var msg1 = "Hello";
+		var msg2 = msg1 + " World";
+		
+		trace( "printIf( " + msg1 + ", isShortEnough ):" );
+		printIf( msg1, isShortEnough );
+		trace( "printIf( " + msg2 + ", isShortEnough ):" );
+		printIf( msg2, isShortEnough );
+		
+		function isLongEnough1( str:String ):Bool {
+			return !isShortEnough( str );
+		}
+		
+		trace( "printIf( " + msg1 + ", isLongEnough1 ):" );
+		printIf( msg1, isLongEnough1 );
+		trace( "printIf( " + msg2 + ", isLongEnough1 ):" );
+		printIf( msg2, isLongEnough1 );
+		
+		var isLongEnough2 = FnLight.not( isShortEnough );
+		
+		trace( "printIf( " + msg2 + ", isLongEnough2 ):" );
+		printIf( msg2, isLongEnough2 );
+		
+	}
+	
+	static function printIfPointless():Void {
+		
+		function output( txt:String ):Void {
+			trace( txt );
+		}
+		
+		function isShortEnough( str:String ):Bool {
+			return str.length <= 5;
+		}
+		
+		var isLongEnough = FnLight.not( isShortEnough );
+		
+		var printIf = FnLight.reverseArgs(
+			FnLight.uncurry( FnLight.partialRight( FnLight.when, output ))
+		);
+		
+		var msg1 = "Hello";
+		var msg2 = msg1 + " World";
+		
+		trace( 'printIf( $msg1, isShortEnough ):' );
+		printIf( msg1, isShortEnough );
+		trace( 'printIf( $msg2, isShortEnough ):' );
+		printIf( msg2, isShortEnough );
+
+		trace( 'printIf( $msg1, isLongEnough ):' );
+		printIf( msg1, isLongEnough );
+		trace( 'printIf( $msg2, isLongEnough ):' );
+		printIf( msg2, isLongEnough );
 		
 	}
 }

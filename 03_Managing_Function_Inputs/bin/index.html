@@ -38,6 +38,12 @@
 				})( [] );
 			}
 			
+			this.not = function (predicate) {
+				return function negated(...args){
+					return !predicate( ...args );
+				};
+			}
+
 			this.partial = function(fn,...presetArgs) {
 				return function partiallyApplied(...laterArgs){
 					return fn( ...presetArgs, ...laterArgs );
@@ -79,6 +85,14 @@
 					}
 
 					return ret;
+				};
+			}
+			
+			this.when = function(predicate,fn) {
+				return function conditional(...args){
+					if (predicate( ...args )) {
+						return fn( ...args );
+					}
 				};
 			}
 			
