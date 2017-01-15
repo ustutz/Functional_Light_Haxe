@@ -114,10 +114,12 @@ class Main {
 		trace( 'pipe bigger wordsUsed: $wordsUsed ');
 	}
 	
-	static function ajax( url:String, data:Dynamic, callback:Dynamic ):Void {
+	static var ajaxTestData:AjaxData;
+	
+	static function ajax( url:String, id:Int, callback:Dynamic ):Void {
 		
-		trace( "ajax( url:" + url + " data:" + Json.stringify( data ) ); 
-		callback( data );
+		var result = ajaxTestData.get( url, id );
+		callback( result );
 	}
 	
 	static function output( str:String ):Void {
@@ -126,15 +128,19 @@ class Main {
 	
 	static function revisitingPointsExample():Void {
 		
+		ajaxTestData = new AjaxData();
+		
 		var getPerson = FnLight.partial( ajax, "http://some.api/person" );
 		var getLastOrder = FnLight.partial( ajax, "http://some.api/order", { id: -1 } );
 		
-		function prop( name:String, obj:Dynamic ) {
-			return obj.name;
+		function prop( name:String, obj:Dynamic ) { //trace( 'getProp $name in obj:${Json.stringify( obj )}; ${Reflect.getProperty( obj, name )}' );
+			return Reflect.getProperty( obj, name );
 		}
 		
 		function setProp( name:String, value:Dynamic ) {
-			return { name: value }
+			var o = {};
+			Reflect.setProperty( o, name, value );
+			return o;
 		}
 		
 		var extractName = FnLight.partial( prop, "name" );
