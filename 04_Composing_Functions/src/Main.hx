@@ -1,6 +1,7 @@
 package;
 
 import com.ls3d.HTMLTrace;
+import haxe.Json;
 import js.Lib;
 
 /**
@@ -17,6 +18,8 @@ class Main {
 		outputToInputExample();
 		skipWordsExample();
 		skipWordsExample2();
+		pipeExample();
+		revisitingPointsExample();
 	}
 	
 	static function words( str:String ):Array<String> {
@@ -98,6 +101,51 @@ class Main {
 		
 		trace( 'biggerWords( text ): ${biggerWords( text )}' );
 		trace( 'shorterWords( text ): ${shorterWords( text )}' );
+	}
+	
+	static function pipeExample():Void {
+		
+		var text = "To compose two functions together, pass the output of the first function call as the input of the second function call.";
+		
+		var biggerWords = FnLight.pipe( words, unique, skipShortWords );
+		
+		var wordsUsed = biggerWords( text );
+		
+		trace( 'pipe bigger wordsUsed: $wordsUsed ');
+	}
+	
+	static function ajax( url:String, data:Dynamic, callback:Dynamic ):Void {
+		
+		trace( "ajax( url:" + url + " data:" + Json.stringify( data ) ); 
+		callback( data );
+	}
+	
+	static function output( str:String ):Void {
+		trace( 'output: $str' );
+	}
+	
+	static function revisitingPointsExample():Void {
+		
+		var getPerson = FnLight.partial( ajax, "http://some.api/person" );
+		var getLastOrder = FnLight.partial( ajax, "http://some.api/order", { id: -1 } );
+		
+		function prop( name:String, obj:Dynamic ) {
+			return obj.name;
+		}
+		
+		function setProp( name:String, value:Dynamic ) {
+			return { name: value }
+		}
+		
+		var extractName = FnLight.partial( prop, "name" );
+		var outputPersonName = FnLight.compose( output, extractName );
+		var processPerson = FnLight.partialRight( getPerson, outputPersonName );
+		var personData = FnLight.partial( setProp, "id" );
+		var extractPersonId = FnLight.partial( prop, "personId" );
+		var lookupPerson = FnLight.compose( processPerson, personData, extractPersonId );
+		
+		trace( 'getLastOrder( lookupPerson ):' );
+		getLastOrder( lookupPerson );
 	}
 	
 }

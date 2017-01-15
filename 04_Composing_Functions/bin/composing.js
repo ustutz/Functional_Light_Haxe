@@ -21,6 +21,8 @@ Main.main = function() {
 	Main.outputToInputExample();
 	Main.skipWordsExample();
 	Main.skipWordsExample2();
+	Main.pipeExample();
+	Main.revisitingPointsExample();
 };
 Main.words = function(str) {
 	var alpha = function(v) {
@@ -41,7 +43,7 @@ Main.unique = function(list) {
 	return uniqList;
 };
 Main.outputToInputExample = function() {
-	haxe_Log.trace("wordsUsed: " + Std.string(Main.unique(Main.words("To compose two functions together, pass the output of the first function call as the input of the second function call."))),{ fileName : "Main.hx", lineNumber : 52, className : "Main", methodName : "outputToInputExample"});
+	haxe_Log.trace("wordsUsed: " + Std.string(Main.unique(Main.words("To compose two functions together, pass the output of the first function call as the input of the second function call."))),{ fileName : "Main.hx", lineNumber : 55, className : "Main", methodName : "outputToInputExample"});
 };
 Main.skipShortWords = function(list) {
 	var filteredList = [];
@@ -56,7 +58,7 @@ Main.skipShortWords = function(list) {
 	return filteredList;
 };
 Main.skipWordsExample = function() {
-	haxe_Log.trace("bigger wordsUsed: " + FnLight.compose(Main.skipShortWords,Main.unique,Main.words)("To compose two functions together, pass the output of the first function call as the input of the second function call.") + " ",{ fileName : "Main.hx", lineNumber : 75, className : "Main", methodName : "skipWordsExample"});
+	haxe_Log.trace("bigger wordsUsed: " + FnLight.compose(Main.skipShortWords,Main.unique,Main.words)("To compose two functions together, pass the output of the first function call as the input of the second function call.") + " ",{ fileName : "Main.hx", lineNumber : 78, className : "Main", methodName : "skipWordsExample"});
 };
 Main.skipLongWords = function(list) {
 	var filteredList = [];
@@ -74,8 +76,30 @@ Main.skipWordsExample2 = function() {
 	var filterWords = FnLight.partialRight(FnLight.compose,Main.unique,Main.words);
 	var biggerWords = filterWords(Main.skipShortWords);
 	var shorterWords = filterWords(Main.skipLongWords);
-	haxe_Log.trace("biggerWords( text ): " + biggerWords("To compose two functions together, pass the output of the first function call as the input of the second function call."),{ fileName : "Main.hx", lineNumber : 99, className : "Main", methodName : "skipWordsExample2"});
-	haxe_Log.trace("shorterWords( text ): " + shorterWords("To compose two functions together, pass the output of the first function call as the input of the second function call."),{ fileName : "Main.hx", lineNumber : 100, className : "Main", methodName : "skipWordsExample2"});
+	haxe_Log.trace("biggerWords( text ): " + biggerWords("To compose two functions together, pass the output of the first function call as the input of the second function call."),{ fileName : "Main.hx", lineNumber : 102, className : "Main", methodName : "skipWordsExample2"});
+	haxe_Log.trace("shorterWords( text ): " + shorterWords("To compose two functions together, pass the output of the first function call as the input of the second function call."),{ fileName : "Main.hx", lineNumber : 103, className : "Main", methodName : "skipWordsExample2"});
+};
+Main.pipeExample = function() {
+	haxe_Log.trace("pipe bigger wordsUsed: " + FnLight.pipe(Main.words,Main.unique,Main.skipShortWords)("To compose two functions together, pass the output of the first function call as the input of the second function call.") + " ",{ fileName : "Main.hx", lineNumber : 114, className : "Main", methodName : "pipeExample"});
+};
+Main.ajax = function(url,data,callback) {
+	haxe_Log.trace("ajax( url:" + url + " data:" + JSON.stringify(data),{ fileName : "Main.hx", lineNumber : 119, className : "Main", methodName : "ajax"});
+	callback(data);
+};
+Main.output = function(str) {
+	haxe_Log.trace("output: " + str,{ fileName : "Main.hx", lineNumber : 124, className : "Main", methodName : "output"});
+};
+Main.revisitingPointsExample = function() {
+	var getPerson = FnLight.partial(Main.ajax,"http://some.api/person");
+	var getLastOrder = FnLight.partial(Main.ajax,"http://some.api/order",{ id : -1});
+	var prop = function(name,obj) {
+		return obj.name;
+	};
+	var lookupPerson = FnLight.compose(FnLight.partialRight(getPerson,FnLight.compose(Main.output,FnLight.partial(prop,"name"))),FnLight.partial(function(name1,value) {
+		return { name : value};
+	},"id"),FnLight.partial(prop,"personId"));
+	haxe_Log.trace("getLastOrder( lookupPerson ):",{ fileName : "Main.hx", lineNumber : 147, className : "Main", methodName : "revisitingPointsExample"});
+	getLastOrder(lookupPerson);
 };
 Math.__name__ = true;
 var Std = function() { };

@@ -12,6 +12,7 @@ extern class FnLight {
 	public static function not( fn:Dynamic ):Dynamic;
 	public static function partial( fn:Dynamic, presentArgs:Rest<Dynamic> ):Dynamic;
 	public static function partialRight( fn:Dynamic, presentArgs:Rest<Dynamic> ):Dynamic;
+	public static function pipe( fns:Rest<Dynamic> ):Dynamic;
 	public static function reverseArgs( fn:Dynamic ):Dynamic;
 	public static function sum( args:Rest<Dynamic> ):Dynamic;
 	public static function unary( fn:Dynamic ):Dynamic;
