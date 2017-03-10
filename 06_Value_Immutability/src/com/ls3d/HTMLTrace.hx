@@ -3,10 +3,6 @@ import js.Browser;
 import haxe.Log;
 import haxe.PosInfos;
 
-/**
- * ...
- * @author Urs Stutz
- */
 class HTMLTrace {
 
 	public static function init():Void {

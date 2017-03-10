@@ -2,10 +2,6 @@ package;
 import com.ls3d.HTMLTrace;
 import haxe.Json;
 
-/**
- * ...
- * @author Urs Stutz
- */
 typedef User = {
 	var name:String;
 	var lastLogin:Float;

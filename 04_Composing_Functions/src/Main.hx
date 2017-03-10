@@ -4,10 +4,6 @@ import com.ls3d.HTMLTrace;
 import haxe.Json;
 import js.Lib;
 
-/**
- * ...
- * @author Urs Stutz
- */
 using Lambda;
 class Main {
 	
