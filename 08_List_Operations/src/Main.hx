@@ -74,5 +74,9 @@ class Main {
 	
 	static function reduce():Void { // = Lambda.fold
 		
+		
+		var reduced = [5, 10, 15].fold( function( product, v ) { return product * v; }, 3 );
+		
+		trace( '[5, 10, 15].fold: $reduced' );
 	}
 }
