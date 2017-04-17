@@ -2,10 +2,6 @@ package;
 
 import neko.Lib;
 
-/**
- * ...
- * @author Urs Stutz
- */
 //@:build( MFields.build())
 class Main {
 	

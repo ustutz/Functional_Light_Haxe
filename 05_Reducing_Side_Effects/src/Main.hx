@@ -3,10 +3,6 @@ package;
 import com.ls3d.HTMLTrace;
 import js.Lib;
 
-/**
- * ...
- * @author Urs Stutz
- */
 typedef Randoms = {
 	var nums:Array<Float>;
 	var smallCount:Int;

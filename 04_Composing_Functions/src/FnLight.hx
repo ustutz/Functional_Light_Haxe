@@ -1,9 +1,6 @@
 package;
 import haxe.extern.Rest;
-/**
- * ...
- * @author Urs Stutz
- */
+
 extern class FnLight {
 
 	public static function compose( fns:Rest<Dynamic> ):Dynamic;

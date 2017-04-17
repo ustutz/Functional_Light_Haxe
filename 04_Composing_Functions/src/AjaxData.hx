@@ -1,10 +1,5 @@
 package;
 
-/**
- * ...
- * @author Urs Stutz
- */
-
 typedef Person = {
 	var id:Int;
 	var name:String;

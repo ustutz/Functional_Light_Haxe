@@ -2,10 +2,6 @@ package;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
-/**
- * ...
- * @author Urs Stutz
- */
 class MFields {
 
 	public static function build():Array<Field> {	
