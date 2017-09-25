@@ -4,6 +4,169 @@
 	<meta charset="utf-8"/>
 	<title>List Operations</title>
 	<meta name="description" content="" />
+	<script type="text/javascript">
+		var FnLight = new function() {
+			
+			// first compose
+/*			this.compose = function(...fns) {
+				return function composed(result){
+					// copy the array of functions
+					var list = fns.slice();
+
+					while (list.length > 0) {
+						// take the last function off the end of the list
+						// and execute it
+						result = list.pop()( result );
+					}
+
+					return result;
+				};
+			}
+*/
+			
+			// compose with reduce
+/*			this.compose = function(...fns) {
+				return function composed(result){
+					return fns.reverse().reduce( function reducer(result,fn){
+						return fn( result );
+					}, result );
+				};
+			}
+*/
+
+			// compose with first function with multiple arguments
+			this.compose = function(...fns) {
+				return fns.reverse().reduce( function reducer(fn1,fn2){
+					return function composed(...args){
+						return fn2( fn1( ...args ) );
+					};
+				} );
+			}
+			
+			// compose with recursion
+/*			this.compose = function(...fns) {
+				// pull off the last two arguments
+				var [ fn1, fn2, ...rest ] = fns.reverse();
+
+				var composedFn = function composed(...args){
+					return fn2( fn1( ...args ) );
+				};
+
+				if (rest.length == 0) return composedFn;
+
+				return compose( ...rest.reverse(), composedFn );
+			}
+*/
+
+			this.curry = function(fn,arity = fn.length) {
+				return (function nextCurried(prevArgs){
+					return function curried(nextArg){
+						var args = prevArgs.concat( [nextArg] );
+
+						if (args.length >= arity) {
+							return fn( ...args );
+						}
+						else {
+							return nextCurried( args );
+						}
+					};
+				})( [] );
+			}
+
+			this.looseCurry = function(fn,arity = fn.length) {
+				return (function nextCurried(prevArgs){
+					return function curried(...nextArgs){
+						var args = prevArgs.concat( nextArgs );
+
+						if (args.length >= arity) {
+							return fn( ...args );
+						}
+						else {
+							return nextCurried( args );
+						}
+					};
+				})( [] );
+			}
+			
+			this.not = function (predicate) {
+				return function negated(...args){
+					return !predicate( ...args );
+				};
+			}
+
+			this.partial = function(fn,...presetArgs) {
+				return function partiallyApplied(...laterArgs){
+					return fn( ...presetArgs, ...laterArgs );
+				};
+			}
+			
+			this.partialRight = function(fn, ...presetArgs) {
+				return this.reverseArgs(
+					this.partial( this.reverseArgs(fn), ...presetArgs.reverse() )
+				);
+			}
+			
+			// pipe
+			this.pipe = function(...fns) {
+				return function piped(result){
+					var list = fns.slice();
+
+					while (list.length > 0) {
+						// take the first function from the list
+						// and execute it
+						result = list.shift()( result );
+					}
+
+					return result;
+				};
+			}
+			
+			this.reverseArgs = function(fn) {
+				return function argsReversed(...args){
+					return fn( ...args.reverse() );
+				};
+			}
+			
+			// pipe as arguments-reversal of compose
+			// not working
+			//var this.pipe = this.reverseArgs( this.compose );
+
+			this.sum = function(...args) {
+				var sum = 0;
+				for (let i = 0; i < args.length; i++) {
+					sum += args[i];
+				}
+				return sum;
+			}
+			
+			this.unary = function(fn) {
+				return function onlyOneArg(arg) {
+					return fn( arg );
+				}
+			}
+			
+			this.uncurry = function(fn) {
+				return function uncurried(...args){
+					var ret = fn;
+
+					for (let i = 0; i < args.length; i++) {
+						ret = ret( args[i] );
+					}
+
+					return ret;
+				};
+			}
+			
+			this.when = function(predicate,fn) {
+				return function conditional(...args){
+					if (predicate( ...args )) {
+						return fn( ...args );
+					}
+				};
+			}
+			
+		}
+	</script>
 </head>
 <body>
 	

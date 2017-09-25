@@ -88,9 +88,13 @@ _$List_ListIterator.prototype = {
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
+	com_ls3d_HTMLTrace.init();
 	Main.map();
 	Main.filter();
 	Main.reduce();
+	Main.mapAsReduce();
+	Main.filterAsReduce();
+	Main.advancedListOperations();
 };
 Main.compose2 = function(f,g) {
 	return function(x) {
@@ -111,7 +115,7 @@ Main.map = function() {
 	var result1 = [one,two,three].map(function(f) {
 		return f();
 	});
-	console.log("[one, two, three].map: " + Std.string(result1));
+	haxe_Log.trace("[one, two, three].map: " + Std.string(result1),{ fileName : "Main.hx", lineNumber : 30, className : "Main", methodName : "map"});
 	var increment = function(v) {
 		return ++v;
 	};
@@ -129,7 +133,7 @@ Main.map = function() {
 	}).map(function(fn1) {
 		return fn1(3);
 	});
-	console.log("[increment, decrement, square].map: " + Std.string(result2));
+	haxe_Log.trace("[increment, decrement, square].map <- 3: " + Std.string(result2),{ fileName : "Main.hx", lineNumber : 41, className : "Main", methodName : "map"});
 };
 Main.filter = function() {
 	var isOdd = function(v) {
@@ -139,12 +143,12 @@ Main.filter = function() {
 		return !isOdd(v1);
 	};
 	var result3 = [1,2,3,4,5].filter(isOdd);
-	console.log("[1, 2, 3, 4, 5].filter( isOdd ): " + Std.string(result3));
-	console.log("isOdd( 3 ): " + Std.string(isOdd(3)));
-	console.log("isEven( 2 ): " + Std.string(isEven(2)));
+	haxe_Log.trace("[1, 2, 3, 4, 5].filter( isOdd ): " + Std.string(result3),{ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "filter"});
+	haxe_Log.trace("isOdd( 3 ): " + Std.string(isOdd(3)),{ fileName : "Main.hx", lineNumber : 56, className : "Main", methodName : "filter"});
+	haxe_Log.trace("isEven( 2 ): " + Std.string(isEven(2)),{ fileName : "Main.hx", lineNumber : 57, className : "Main", methodName : "filter"});
 	var filterInIsEven = Main.filterIn(isEven,[1,2,3,4,5]);
-	console.log("filterIn( isOdd, [1, 2, 3, 4, 5] ): " + Std.string(Main.filterIn(isOdd,[1,2,3,4,5])));
-	console.log("filterIn( isEven, [1, 2, 3, 4, 5] ): " + Std.string(Main.filterIn(isEven,[1,2,3,4,5])));
+	haxe_Log.trace("filterIn( isOdd, [1, 2, 3, 4, 5] ): " + Std.string(Main.filterIn(isOdd,[1,2,3,4,5])),{ fileName : "Main.hx", lineNumber : 61, className : "Main", methodName : "filter"});
+	haxe_Log.trace("filterIn( isEven, [1, 2, 3, 4, 5] ): " + Std.string(Main.filterIn(isEven,[1,2,3,4,5])),{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "filter"});
 };
 Main.not = function(predicateFn) {
 	return function(v) {
@@ -161,7 +165,53 @@ Main.reduce = function() {
 	var reduced = Lambda.fold([5,10,15],function(product,v) {
 		return product * v;
 	},3);
-	console.log("[5, 10, 15].fold: " + reduced);
+	haxe_Log.trace("[5, 10, 15].fold( product * v, 3 ): " + reduced,{ fileName : "Main.hx", lineNumber : 86, className : "Main", methodName : "reduce"});
+	var hyphenate = function(str,$char) {
+		return str + "-" + $char;
+	};
+	haxe_Log.trace("[\"a\", \"b\", \"c\"].fold( hyphenate ): " + Lambda.fold(["a","b","c"],hyphenate,""),{ fileName : "Main.hx", lineNumber : 89, className : "Main", methodName : "reduce"});
+	var a = ["a","b","c"];
+	a.reverse();
+	haxe_Log.trace("reversed [\"a\", \"b\", \"c\"].fold( hyphenate, \"\" ): " + Lambda.fold(a,hyphenate,""),{ fileName : "Main.hx", lineNumber : 93, className : "Main", methodName : "reduce"});
+};
+Main.mapAsReduce = function() {
+	var $double = function(v) {
+		return v * 2;
+	};
+	var d1 = [1,2,3,4,5].map($double);
+	haxe_Log.trace("[1,2,3,4,5].map( double ): " + Std.string(d1),{ fileName : "Main.hx", lineNumber : 102, className : "Main", methodName : "mapAsReduce"});
+	var rm = function(v1,a) {
+		a.push($double(v1));
+		return a;
+	};
+	var reduceMap = rm;
+	var d2 = Lambda.fold([1,2,3,4,5],reduceMap,[]);
+	haxe_Log.trace("[1,2,3,4,5].fold( reduceMap, [] ): " + Std.string(d2),{ fileName : "Main.hx", lineNumber : 110, className : "Main", methodName : "mapAsReduce"});
+};
+Main.filterAsReduce = function() {
+	var isOdd = function(v) {
+		return v % 2 == 1;
+	};
+	var f1 = [1,2,3,4,5].filter(isOdd);
+	haxe_Log.trace("[1,2,3,4,5].filter( isOdd ): " + Std.string(f1),{ fileName : "Main.hx", lineNumber : 119, className : "Main", methodName : "filterAsReduce"});
+	var rf = function(v1,a) {
+		if(isOdd(v1)) {
+			a.push(v1);
+		}
+		return a;
+	};
+	var reduceFilter = rf;
+	var f2 = Lambda.fold([1,2,3,4,5],reduceFilter,[]);
+	haxe_Log.trace("[1,2,3,4,5].fold( reduceFilter, [] ): " + Std.string(f2),{ fileName : "Main.hx", lineNumber : 127, className : "Main", methodName : "filterAsReduce"});
+};
+Main.flatten = function(arr) {
+	return Lambda.fold(arr,function(v,list) {
+		return list.concat((v instanceof Array) && v.__enum__ == null ? Main.flatten(v) : v);
+	},[]);
+};
+Main.advancedListOperations = function() {
+	var f1 = Main.flatten([[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]]);
+	haxe_Log.trace("flatten( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]] ): " + Std.string(f1),{ fileName : "Main.hx", lineNumber : 140, className : "Main", methodName : "advancedListOperations"});
 };
 Math.__name__ = true;
 var Std = function() { };
@@ -169,8 +219,51 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
+var com_ls3d_HTMLTrace = function() { };
+com_ls3d_HTMLTrace.__name__ = true;
+com_ls3d_HTMLTrace.init = function() {
+	haxe_Log.trace = function(v,infos) {
+		var div = window.document.createElement("div");
+		div.innerHTML = v;
+		window.document.body.appendChild(div);
+	};
+};
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.trace = function(v,infos) {
+	js_Boot.__trace(v,infos);
+};
 var js_Boot = function() { };
 js_Boot.__name__ = true;
+js_Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+};
+js_Boot.__trace = function(v,i) {
+	var msg = i != null ? i.fileName + ":" + i.lineNumber + ": " : "";
+	msg += js_Boot.__string_rec(v,"");
+	if(i != null && i.customParams != null) {
+		var _g = 0;
+		var _g1 = i.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			msg += "," + js_Boot.__string_rec(v1,"");
+		}
+	}
+	var d;
+	var tmp;
+	if(typeof(document) != "undefined") {
+		d = document.getElementById("haxe:trace");
+		tmp = d != null;
+	} else {
+		tmp = false;
+	}
+	if(tmp) {
+		d.innerHTML += js_Boot.__unhtml(msg) + "<br/>";
+	} else if(typeof console != "undefined" && console.log != null) {
+		console.log(msg);
+	}
+};
 js_Boot.__string_rec = function(o,s) {
 	if(o == null) {
 		return "null";
