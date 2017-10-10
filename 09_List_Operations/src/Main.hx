@@ -15,6 +15,7 @@ class Main {
 		mapAsReduce();
 		filterAsReduce();
 		advancedListOperations();
+		mappingThenFlattening();
 	}
 	
 	public static function compose2<A,B,C>( f:B->C, g:A->B ):A->C { return function( x:A ) return f( g( x )); }
@@ -128,15 +129,66 @@ class Main {
 		
 	}
 	
-	static function flatten( arr:Array<Dynamic> ) {
+	static function flatten1( arr:Array<Dynamic> ):Array<Dynamic> {
 		return arr.fold( function( v:Dynamic, list:Array<Dynamic> ):Array<Dynamic> {
-			return list.concat( Std.is( v, Array ) ? flatten( v ) : v );
+			return list.concat( Std.is( v, Array ) ? flatten1( v ) : v );
 		}, [] );
 	}
-		
+	
+	static function flatten2( arr:Array<Dynamic>, depth:Null<Float> ):Array<Dynamic> {
+		if ( depth == null ) depth = Math.POSITIVE_INFINITY;
+		return arr.fold( function( v:Dynamic, list:Array<Dynamic> ):Array<Dynamic> {
+			return list.concat( depth > 0 ? ( depth > 1 && Std.is( v, Array ) ? flatten2( v, depth - 1 ) : v ) : [v] );
+		}, [] );
+	}
+	
 	static function advancedListOperations():Void {
 		
-		var f1 = flatten( [[0, 1], 2, 3, [4, [5, 6, 7], [8, [9, [10, [11, 12], 13]]]]] );
-		trace( 'flatten( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]] ): ' + f1 );
+		var f1 = flatten1( [[0, 1], 2, 3, [4, [5, 6, 7], [8, [9, [10, [11, 12], 13]]]]] );
+		trace( 'flatten1( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]] ): ' + f1 );
+		
+		var f20 = flatten2( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]], 0 );
+		trace( 'flatten20: $f20' );
+		
+		var f21 = flatten2( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]], 1 );
+		trace( 'flatten21: $f21' );
+		
+		var f22 = flatten2( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]], 2 );
+		trace( 'flatten22: $f22' );
+		
+		var f23 = flatten2( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]], 3 );
+		trace( 'flatten23: $f23' );
+		
+		var f24 = flatten2( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]], 4 );
+		trace( 'flatten24: $f24' );
+		
+		var f25 = flatten2( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]], 5 );
+		trace( 'flatten25: $f25' );
+		
+	}
+	
+	static function mappingThenFlattening():Void {
+		
+		var firstNames = [
+			{ name: "Jonathan", variations: [ "John", "Jon", "Jonny" ] },
+			{ name: "Stephanie", variations: [ "Steph", "Stephy" ] },
+			{ name: "Frederick", variations: [ "Fred", "Freddy" ] }
+		];
+		
+		var mapResult = firstNames.map( function( entry ) return [entry.name].concat( entry.variations ));
+		trace( 'firstnames.map $mapResult' );
+		
+		var flatMap1 = function( mapperFn, arr:Array<Dynamic> ):Array<Dynamic> {
+			return flatten2( arr.map( mapperFn ), 1 );
+		}
+		
+		var flatMap1Result = flatMap1( function( entry ) { return [entry.name].concat( entry.variations ); }, firstNames );
+		trace( 'flatMap1 firstnames $flatMap1Result' );
+		
+		var flatMap2 = function( mapperFn, arr:Array<Dynamic> ):Array<Dynamic> {
+			return arr.fold( v, list ) { return list.concat( mapperFn( v ))}, [] );
+		}
+		var flatMap2Result = flatMap2( function( entry ) { return [entry.name].concat( entry.variations ); }, firstNames );
+		trace( 'flatMap2 firstnames $flatMap2Result' );
 	}
 }
