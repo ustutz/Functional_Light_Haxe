@@ -22,22 +22,22 @@ class Main {
 
 	static function map():Void {
 		
-		var one = function():Int return 1;
-		var two = function():Int return 2;
-		var three = function():Int return 3;
+		var one = () -> 1;
+		var two = () -> 2;
+		var three = () -> 3;
 		
-		var result1 = [one, two, three].map( function( f:Void->Int ) return f());
+		var result1 = [one, two, three].map( fn -> fn());
 		
 		trace( '[one, two, three].map: $result1' );
 		
 		
-		var increment = function( v:Int ) return ++v;
-		var decrement = function( v:Int ) return --v;
-		var square = function( v:Int ) return v * v;
+		var increment = v -> ++v;
+		var decrement = v -> --v;
+		var square = v -> v * v;
 		
-		var double = function( v:Int ) return v * 2;
+		var double = v -> v * 2;
 		
-		var result2 = [increment, decrement, square].map( function( fn:Int->Int ) return compose2( fn, double )).map( function( fn:Int->Int ) return fn( 3 ));
+		var result2 = [increment, decrement, square].map( fn -> compose2( fn, double )).map( fn -> fn( 3 ));
 		
 		trace( '[increment, decrement, square].map <- 3: $result2' );
 	}
@@ -46,8 +46,8 @@ class Main {
 	
 	static function filter():Void {
 		
-		var isOdd = function( v:Int ):Bool return v % 2 == 1;
-		var isEven = function( v:Int ):Bool return !isOdd( v );
+		var isOdd = v -> v % 2 == 1;
+		var isEven = v -> !isOdd( v );
 		
 		var result3 = [1, 2, 3, 4, 5].filter( isOdd );
 		
@@ -65,9 +65,7 @@ class Main {
 	}
 	
 	static function not<A>( predicateFn:A->Bool ):A->Bool {
-		return function( v:A ):Bool {
-			return !predicateFn( v );
-		}
+		return ( v:A ) -> !predicateFn( v );
 	}
 	
 	static function filterIn<A>( predicateFn:A->Bool, iterable:Iterable<A> ) { 
@@ -82,11 +80,12 @@ class Main {
 	
 	static function reduce():Void { // = Lambda.fold
 		
-		var reduced = [5, 10, 15].fold( function( product, v ) { return product * v; }, 3 );
+		var reduced = [5, 10, 15].fold( ( product, v ) -> product * v, 3 );
 		
 		trace( '[5, 10, 15].fold( product * v, 3 ): $reduced' );
 		
-		var hyphenate = function( str:String, char:String ) return str + "-" + char;
+		var hyphenate = ( str, char ) -> str + "-" + char;
+		
 		trace( '["a", "b", "c"].fold( hyphenate ): ' + ["a", "b", "c"].fold( hyphenate, "" ) );
 		
 		var a = ["a", "b", "c"];
@@ -97,7 +96,7 @@ class Main {
 	
 	static function mapAsReduce():Void {
 		
-		var double = function( v:Int ) return v * 2;
+		var double = v -> v * 2;
 		
 		var d1 = [1, 2, 3, 4, 5].map( double );
 		trace( '[1,2,3,4,5].map( double ): ' + d1 );
@@ -114,7 +113,7 @@ class Main {
 	
 	static function filterAsReduce():Void {
 		
-		var isOdd = function( v:Int ):Bool return v % 2 == 1;
+		var isOdd = v -> v % 2 == 1;
 		
 		var f1 = [1, 2, 3, 4, 5].filter( isOdd );
 		trace( '[1,2,3,4,5].filter( isOdd ): ' + f1 );
@@ -130,16 +129,12 @@ class Main {
 	}
 	
 	static function flatten1( arr:Array<Dynamic> ):Array<Dynamic> {
-		return arr.fold( function( v:Dynamic, list:Array<Dynamic> ):Array<Dynamic> {
-			return list.concat( Std.is( v, Array ) ? flatten1( v ) : v );
-		}, [] );
+		return arr.fold( ( v:Dynamic, list:Array<Dynamic> ) -> list.concat( Std.is( v, Array ) ? flatten1( v ) : v ) , [] );
 	}
 	
 	static function flatten2( arr:Array<Dynamic>, depth:Null<Float> ):Array<Dynamic> {
 		if ( depth == null ) depth = Math.POSITIVE_INFINITY;
-		return arr.fold( function( v:Dynamic, list:Array<Dynamic> ):Array<Dynamic> {
-			return list.concat( depth > 0 ? ( depth > 1 && Std.is( v, Array ) ? flatten2( v, depth - 1 ) : v ) : [v] );
-		}, [] );
+		return arr.fold( ( v:Dynamic, list:Array<Dynamic> ) -> list.concat( depth > 0 ? ( depth > 1 && Std.is( v, Array ) ? flatten2( v, depth - 1 ) : v ) : [v] ), [] );
 	}
 	
 	static function advancedListOperations():Void {
@@ -175,20 +170,23 @@ class Main {
 			{ name: "Frederick", variations: [ "Fred", "Freddy" ] }
 		];
 		
-		var mapResult = firstNames.map( function( entry ) return [entry.name].concat( entry.variations ));
+		var mapResult = firstNames.map( ( entry ) -> [entry.name].concat( entry.variations ));
 		trace( 'firstnames.map $mapResult' );
 		
-		var flatMap1 = function( mapperFn, arr:Array<Dynamic> ):Array<Dynamic> {
-			return flatten2( arr.map( mapperFn ), 1 );
-		}
+		var flatMap1 = ( mapperFn, arr:Array<Dynamic> ) -> flatten2( arr.map( mapperFn ), 1 );
 		
-		var flatMap1Result = flatMap1( function( entry ) { return [entry.name].concat( entry.variations ); }, firstNames );
+		var flatMap1Result = flatMap1( ( entry ) -> [entry.name].concat( entry.variations ), firstNames );
 		trace( 'flatMap1 firstnames $flatMap1Result' );
 		
-		var flatMap2 = function( mapperFn, arr:Array<Dynamic> ):Array<Dynamic> {
-			return arr.fold( v, list ) { return list.concat( mapperFn( v ))}, [] );
-		}
-		var flatMap2Result = flatMap2( function( entry ) { return [entry.name].concat( entry.variations ); }, firstNames );
+		var flatMap2 = 
+			( mapperFn:Dynamic->Dynamic, arr:Array<Dynamic> ) -> 
+				arr.fold(
+					( v:Dynamic, list:Array<Dynamic> ) -> 
+						list.concat( mapperFn( v ))
+				, [] );
+		
+		var flatMap2Result = flatMap2( ( entry ) -> [entry.name].concat( entry.variations ), firstNames );
 		trace( 'flatMap2 firstnames $flatMap2Result' );
 	}
+	
 }
