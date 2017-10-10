@@ -16,6 +16,7 @@ class Main {
 		filterAsReduce();
 		advancedListOperations();
 		mappingThenFlattening();
+		zipIt();
 	}
 	
 	public static function compose2<A,B,C>( f:B->C, g:A->B ):A->C { return function( x:A ) return f( g( x )); }
@@ -189,4 +190,49 @@ class Main {
 		trace( 'flatMap2 firstnames $flatMap2Result' );
 	}
 	
+	static function zip<T>( arr1:Array<T>, arr2:Array<T> ):Array<Array<T>> {
+		
+		var zipped:Array<Array<T>> = [];
+		var arr1 = arr1.slice( 0 );
+		var arr2 = arr2.slice( 0 );
+		
+		while ( arr1.length > 0 && arr2.length > 0 ) {
+			zipped.push( [ arr1.shift(), arr2.shift() ] );
+		}
+		
+		return zipped;
+	}
+	
+	static function mergeLists<T>( arr1:Array<T>, arr2:Array<T> ):Array<T> {
+		
+		var merged:Array<T> = [];
+		var arr1 = arr1.slice( 0 );
+		var arr2 = arr2.slice( 0 );
+		
+		while ( arr1.length > 0 || arr2.length > 0 ) {
+			if ( arr1.length > 0 ) {
+				merged.push( arr1.shift() );
+			}
+			if ( arr2.length > 0 ) {
+				merged.push( arr2.shift() );
+			}
+		}
+		
+		return merged;
+	}
+	
+	static function zipIt():Void {
+		
+		var z1 = zip( [1, 3, 5, 7, 9], [2, 4, 6, 8, 10] );
+		trace( 'zip( [1, 3, 5, 7, 9], [2, 4, 6, 8, 10] ): $z1' );
+		
+		var f1 = flatten1( [ [1, 2], [3, 4], [5, 6], [7, 8], [9, 10] ] );
+		trace( 'flatten( [ [1, 2], [3, 4], [5, 6], [7, 8], [9, 10] ] ): $f1' );
+		
+		var fz = flatten1( zip ( [1, 3, 5, 7, 9], [2, 4, 6, 8, 10] ));
+		trace( 'flatten1( zip ( [1, 3, 5, 7, 9], [2, 4, 6, 8, 10] )): $fz' );
+		
+		var m1 = mergeLists( [1, 3, 5, 7, 9], [2, 4, 6] );
+		trace( 'mergeLists( [1, 3, 5, 7, 9], [2, 4, 6] ): $m1' );
+	}
 }

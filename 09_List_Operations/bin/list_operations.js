@@ -48,6 +48,7 @@ Main.main = function() {
 	Main.filterAsReduce();
 	Main.advancedListOperations();
 	Main.mappingThenFlattening();
+	Main.zipIt();
 };
 Main.compose2 = function(f,g) {
 	return function(x) {
@@ -68,7 +69,7 @@ Main.map = function() {
 	var result1 = [one,two,three].map(function(fn) {
 		return fn();
 	});
-	haxe_Log.trace("[one, two, three].map: " + Std.string(result1),{ fileName : "Main.hx", lineNumber : 31, className : "Main", methodName : "map"});
+	haxe_Log.trace("[one, two, three].map: " + Std.string(result1),{ fileName : "Main.hx", lineNumber : 32, className : "Main", methodName : "map"});
 	var increment = function(v) {
 		return ++v;
 	};
@@ -86,7 +87,7 @@ Main.map = function() {
 	}).map(function(fn2) {
 		return fn2(3);
 	});
-	haxe_Log.trace("[increment, decrement, square].map <- 3: " + Std.string(result2),{ fileName : "Main.hx", lineNumber : 42, className : "Main", methodName : "map"});
+	haxe_Log.trace("[increment, decrement, square].map <- 3: " + Std.string(result2),{ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "map"});
 };
 Main.filter = function() {
 	var isOdd = function(v) {
@@ -96,12 +97,12 @@ Main.filter = function() {
 		return !isOdd(v1);
 	};
 	var result3 = [1,2,3,4,5].filter(isOdd);
-	haxe_Log.trace("[1, 2, 3, 4, 5].filter( isOdd ): " + Std.string(result3),{ fileName : "Main.hx", lineNumber : 54, className : "Main", methodName : "filter"});
-	haxe_Log.trace("isOdd( 3 ): " + Std.string(isOdd(3)),{ fileName : "Main.hx", lineNumber : 57, className : "Main", methodName : "filter"});
-	haxe_Log.trace("isEven( 2 ): " + Std.string(isEven(2)),{ fileName : "Main.hx", lineNumber : 58, className : "Main", methodName : "filter"});
+	haxe_Log.trace("[1, 2, 3, 4, 5].filter( isOdd ): " + Std.string(result3),{ fileName : "Main.hx", lineNumber : 55, className : "Main", methodName : "filter"});
+	haxe_Log.trace("isOdd( 3 ): " + Std.string(isOdd(3)),{ fileName : "Main.hx", lineNumber : 58, className : "Main", methodName : "filter"});
+	haxe_Log.trace("isEven( 2 ): " + Std.string(isEven(2)),{ fileName : "Main.hx", lineNumber : 59, className : "Main", methodName : "filter"});
 	var filterInIsEven = Main.filterIn(isEven,[1,2,3,4,5]);
-	haxe_Log.trace("filterIn( isOdd, [1, 2, 3, 4, 5] ): " + Std.string(Main.filterIn(isOdd,[1,2,3,4,5])),{ fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "filter"});
-	haxe_Log.trace("filterIn( isEven, [1, 2, 3, 4, 5] ): " + Std.string(Main.filterIn(isEven,[1,2,3,4,5])),{ fileName : "Main.hx", lineNumber : 63, className : "Main", methodName : "filter"});
+	haxe_Log.trace("filterIn( isOdd, [1, 2, 3, 4, 5] ): " + Std.string(Main.filterIn(isOdd,[1,2,3,4,5])),{ fileName : "Main.hx", lineNumber : 63, className : "Main", methodName : "filter"});
+	haxe_Log.trace("filterIn( isEven, [1, 2, 3, 4, 5] ): " + Std.string(Main.filterIn(isEven,[1,2,3,4,5])),{ fileName : "Main.hx", lineNumber : 64, className : "Main", methodName : "filter"});
 };
 Main.not = function(predicateFn) {
 	return function(v) {
@@ -118,35 +119,35 @@ Main.reduce = function() {
 	var reduced = Lambda.fold([5,10,15],function(product,v) {
 		return product * v;
 	},3);
-	haxe_Log.trace("[5, 10, 15].fold( product * v, 3 ): " + reduced,{ fileName : "Main.hx", lineNumber : 85, className : "Main", methodName : "reduce"});
+	haxe_Log.trace("[5, 10, 15].fold( product * v, 3 ): " + reduced,{ fileName : "Main.hx", lineNumber : 86, className : "Main", methodName : "reduce"});
 	var hyphenate = function(str,char) {
 		return str + "-" + char;
 	};
-	haxe_Log.trace("[\"a\", \"b\", \"c\"].fold( hyphenate ): " + Lambda.fold(["a","b","c"],hyphenate,""),{ fileName : "Main.hx", lineNumber : 89, className : "Main", methodName : "reduce"});
+	haxe_Log.trace("[\"a\", \"b\", \"c\"].fold( hyphenate ): " + Lambda.fold(["a","b","c"],hyphenate,""),{ fileName : "Main.hx", lineNumber : 90, className : "Main", methodName : "reduce"});
 	var a = ["a","b","c"];
 	a.reverse();
-	haxe_Log.trace("reversed [\"a\", \"b\", \"c\"].fold( hyphenate, \"\" ): " + Lambda.fold(a,hyphenate,""),{ fileName : "Main.hx", lineNumber : 93, className : "Main", methodName : "reduce"});
+	haxe_Log.trace("reversed [\"a\", \"b\", \"c\"].fold( hyphenate, \"\" ): " + Lambda.fold(a,hyphenate,""),{ fileName : "Main.hx", lineNumber : 94, className : "Main", methodName : "reduce"});
 };
 Main.mapAsReduce = function() {
 	var double = function(v) {
 		return v * 2;
 	};
 	var d1 = [1,2,3,4,5].map(double);
-	haxe_Log.trace("[1,2,3,4,5].map( double ): " + Std.string(d1),{ fileName : "Main.hx", lineNumber : 102, className : "Main", methodName : "mapAsReduce"});
+	haxe_Log.trace("[1,2,3,4,5].map( double ): " + Std.string(d1),{ fileName : "Main.hx", lineNumber : 103, className : "Main", methodName : "mapAsReduce"});
 	var rm = function(v1,a) {
 		a.push(double(v1));
 		return a;
 	};
 	var reduceMap = rm;
 	var d2 = Lambda.fold([1,2,3,4,5],reduceMap,[]);
-	haxe_Log.trace("[1,2,3,4,5].fold( reduceMap, [] ): " + Std.string(d2),{ fileName : "Main.hx", lineNumber : 110, className : "Main", methodName : "mapAsReduce"});
+	haxe_Log.trace("[1,2,3,4,5].fold( reduceMap, [] ): " + Std.string(d2),{ fileName : "Main.hx", lineNumber : 111, className : "Main", methodName : "mapAsReduce"});
 };
 Main.filterAsReduce = function() {
 	var isOdd = function(v) {
 		return v % 2 == 1;
 	};
 	var f1 = [1,2,3,4,5].filter(isOdd);
-	haxe_Log.trace("[1,2,3,4,5].filter( isOdd ): " + Std.string(f1),{ fileName : "Main.hx", lineNumber : 119, className : "Main", methodName : "filterAsReduce"});
+	haxe_Log.trace("[1,2,3,4,5].filter( isOdd ): " + Std.string(f1),{ fileName : "Main.hx", lineNumber : 120, className : "Main", methodName : "filterAsReduce"});
 	var rf = function(v1,a) {
 		if(isOdd(v1)) {
 			a.push(v1);
@@ -155,7 +156,7 @@ Main.filterAsReduce = function() {
 	};
 	var reduceFilter = rf;
 	var f2 = Lambda.fold([1,2,3,4,5],reduceFilter,[]);
-	haxe_Log.trace("[1,2,3,4,5].fold( reduceFilter, [] ): " + Std.string(f2),{ fileName : "Main.hx", lineNumber : 127, className : "Main", methodName : "filterAsReduce"});
+	haxe_Log.trace("[1,2,3,4,5].fold( reduceFilter, [] ): " + Std.string(f2),{ fileName : "Main.hx", lineNumber : 128, className : "Main", methodName : "filterAsReduce"});
 };
 Main.flatten1 = function(arr) {
 	return Lambda.fold(arr,function(v,list) {
@@ -172,33 +173,33 @@ Main.flatten2 = function(arr,depth) {
 };
 Main.advancedListOperations = function() {
 	var f1 = Main.flatten1([[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]]);
-	haxe_Log.trace("flatten1( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]] ): " + Std.string(f1),{ fileName : "Main.hx", lineNumber : 143, className : "Main", methodName : "advancedListOperations"});
+	haxe_Log.trace("flatten1( [[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]] ): " + Std.string(f1),{ fileName : "Main.hx", lineNumber : 144, className : "Main", methodName : "advancedListOperations"});
 	var f20 = Main.flatten2([[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]],0);
-	haxe_Log.trace("flatten20: " + Std.string(f20),{ fileName : "Main.hx", lineNumber : 146, className : "Main", methodName : "advancedListOperations"});
+	haxe_Log.trace("flatten20: " + Std.string(f20),{ fileName : "Main.hx", lineNumber : 147, className : "Main", methodName : "advancedListOperations"});
 	var f21 = Main.flatten2([[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]],1);
-	haxe_Log.trace("flatten21: " + Std.string(f21),{ fileName : "Main.hx", lineNumber : 149, className : "Main", methodName : "advancedListOperations"});
+	haxe_Log.trace("flatten21: " + Std.string(f21),{ fileName : "Main.hx", lineNumber : 150, className : "Main", methodName : "advancedListOperations"});
 	var f22 = Main.flatten2([[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]],2);
-	haxe_Log.trace("flatten22: " + Std.string(f22),{ fileName : "Main.hx", lineNumber : 152, className : "Main", methodName : "advancedListOperations"});
+	haxe_Log.trace("flatten22: " + Std.string(f22),{ fileName : "Main.hx", lineNumber : 153, className : "Main", methodName : "advancedListOperations"});
 	var f23 = Main.flatten2([[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]],3);
-	haxe_Log.trace("flatten23: " + Std.string(f23),{ fileName : "Main.hx", lineNumber : 155, className : "Main", methodName : "advancedListOperations"});
+	haxe_Log.trace("flatten23: " + Std.string(f23),{ fileName : "Main.hx", lineNumber : 156, className : "Main", methodName : "advancedListOperations"});
 	var f24 = Main.flatten2([[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]],4);
-	haxe_Log.trace("flatten24: " + Std.string(f24),{ fileName : "Main.hx", lineNumber : 158, className : "Main", methodName : "advancedListOperations"});
+	haxe_Log.trace("flatten24: " + Std.string(f24),{ fileName : "Main.hx", lineNumber : 159, className : "Main", methodName : "advancedListOperations"});
 	var f25 = Main.flatten2([[0,1],2,3,[4,[5,6,7],[8,[9,[10,[11,12],13]]]]],5);
-	haxe_Log.trace("flatten25: " + Std.string(f25),{ fileName : "Main.hx", lineNumber : 161, className : "Main", methodName : "advancedListOperations"});
+	haxe_Log.trace("flatten25: " + Std.string(f25),{ fileName : "Main.hx", lineNumber : 162, className : "Main", methodName : "advancedListOperations"});
 };
 Main.mappingThenFlattening = function() {
 	var firstNames = [{ name : "Jonathan", variations : ["John","Jon","Jonny"]},{ name : "Stephanie", variations : ["Steph","Stephy"]},{ name : "Frederick", variations : ["Fred","Freddy"]}];
 	var mapResult = firstNames.map(function(entry) {
 		return [entry.name].concat(entry.variations);
 	});
-	haxe_Log.trace("firstnames.map " + Std.string(mapResult),{ fileName : "Main.hx", lineNumber : 174, className : "Main", methodName : "mappingThenFlattening"});
+	haxe_Log.trace("firstnames.map " + Std.string(mapResult),{ fileName : "Main.hx", lineNumber : 175, className : "Main", methodName : "mappingThenFlattening"});
 	var flatMap1 = function(mapperFn,arr) {
 		return Main.flatten2(arr.map(mapperFn),1);
 	};
 	var flatMap1Result = flatMap1(function(entry1) {
 		return [entry1.name].concat(entry1.variations);
 	},firstNames);
-	haxe_Log.trace("flatMap1 firstnames " + Std.string(flatMap1Result),{ fileName : "Main.hx", lineNumber : 179, className : "Main", methodName : "mappingThenFlattening"});
+	haxe_Log.trace("flatMap1 firstnames " + Std.string(flatMap1Result),{ fileName : "Main.hx", lineNumber : 180, className : "Main", methodName : "mappingThenFlattening"});
 	var flatMap2 = function(mapperFn1,arr1) {
 		return Lambda.fold(arr1,function(v,list) {
 			return list.concat(mapperFn1(v));
@@ -207,7 +208,38 @@ Main.mappingThenFlattening = function() {
 	var flatMap2Result = flatMap2(function(entry2) {
 		return [entry2.name].concat(entry2.variations);
 	},firstNames);
-	haxe_Log.trace("flatMap2 firstnames " + Std.string(flatMap2Result),{ fileName : "Main.hx", lineNumber : 189, className : "Main", methodName : "mappingThenFlattening"});
+	haxe_Log.trace("flatMap2 firstnames " + Std.string(flatMap2Result),{ fileName : "Main.hx", lineNumber : 190, className : "Main", methodName : "mappingThenFlattening"});
+};
+Main.zip = function(arr1,arr2) {
+	var zipped = [];
+	var arr11 = arr1.slice(0);
+	var arr21 = arr2.slice(0);
+	while(arr11.length > 0 && arr21.length > 0) zipped.push([arr11.shift(),arr21.shift()]);
+	return zipped;
+};
+Main.mergeLists = function(arr1,arr2) {
+	var merged = [];
+	var arr11 = arr1.slice(0);
+	var arr21 = arr2.slice(0);
+	while(arr11.length > 0 || arr21.length > 0) {
+		if(arr11.length > 0) {
+			merged.push(arr11.shift());
+		}
+		if(arr21.length > 0) {
+			merged.push(arr21.shift());
+		}
+	}
+	return merged;
+};
+Main.zipIt = function() {
+	var z1 = Main.zip([1,3,5,7,9],[2,4,6,8,10]);
+	haxe_Log.trace("zip( [1, 3, 5, 7, 9], [2, 4, 6, 8, 10] ): " + Std.string(z1),{ fileName : "Main.hx", lineNumber : 227, className : "Main", methodName : "zipIt"});
+	var f1 = Main.flatten1([[1,2],[3,4],[5,6],[7,8],[9,10]]);
+	haxe_Log.trace("flatten( [ [1, 2], [3, 4], [5, 6], [7, 8], [9, 10] ] ): " + Std.string(f1),{ fileName : "Main.hx", lineNumber : 230, className : "Main", methodName : "zipIt"});
+	var fz = Main.flatten1(Main.zip([1,3,5,7,9],[2,4,6,8,10]));
+	haxe_Log.trace("flatten1( zip ( [1, 3, 5, 7, 9], [2, 4, 6, 8, 10] )): " + Std.string(fz),{ fileName : "Main.hx", lineNumber : 233, className : "Main", methodName : "zipIt"});
+	var m1 = Main.mergeLists([1,3,5,7,9],[2,4,6]);
+	haxe_Log.trace("mergeLists( [1, 3, 5, 7, 9], [2, 4, 6] ): " + Std.string(m1),{ fileName : "Main.hx", lineNumber : 236, className : "Main", methodName : "zipIt"});
 };
 Math.__name__ = true;
 var Std = function() { };
